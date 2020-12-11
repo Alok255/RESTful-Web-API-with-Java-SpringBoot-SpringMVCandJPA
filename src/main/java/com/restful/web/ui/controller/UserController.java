@@ -17,12 +17,8 @@ public class UserController {
     UserService userService;
     @GetMapping
     public UserRest getUser(){
-        UserRest returnValue = new UserRest();
 
-        UserDto getUsers = userService.getUser();
-        BeanUtils.copyProperties(getUsers, returnValue);
-
-        return returnValue;
+        return null;
     }
 
     @PostMapping
