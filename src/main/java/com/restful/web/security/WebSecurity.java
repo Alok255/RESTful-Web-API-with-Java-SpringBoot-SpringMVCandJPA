@@ -24,11 +24,17 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         http.csrf().disable().authorizeRequests()
         .antMatchers(HttpMethod.POST, "/users")
         .permitAll()
-        .anyRequest().authenticated().and().addFilter(new AuthenticationFilter(authenticationManager()));
+        .anyRequest().authenticated().and().addFilter(getAuthenticationFiler());
     }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws  Exception{
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+    }
+
+    public AuthenticationFilter getAuthenticationFiler() throws Exception{
+        final AuthenticationFilter filter = new AuthenticationFilter(authenticationManager());
+        filter.setFilterProcessesUrl("/users/login");
+        return filter;
     }
 }
