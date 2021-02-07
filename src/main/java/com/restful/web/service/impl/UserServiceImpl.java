@@ -1,6 +1,6 @@
 package com.restful.web.service.impl;
 
-import com.restful.web.UserRepository;
+import com.restful.web.io.repositories.UserRepository;
 import com.restful.web.io.entity.UserEntity;
 import com.restful.web.service.UserService;
 import com.restful.web.shared.dto.UserDto;
@@ -47,6 +47,15 @@ public class UserServiceImpl implements UserService {
 
         BeanUtils.copyProperties(storedUserDetails, returnValue);
 
+        return returnValue;
+    }
+
+    @Override
+    public UserDto getUser(String email){
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if(userEntity == null) throw new UsernameNotFoundException(email);
+        UserDto returnValue = new UserDto();
+        BeanUtils.copyProperties(userEntity, returnValue);
         return returnValue;
     }
 

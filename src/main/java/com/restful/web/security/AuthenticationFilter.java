@@ -1,6 +1,9 @@
 package com.restful.web.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restful.web.SpringApplicationContext;
+import com.restful.web.service.UserService;
+import com.restful.web.shared.dto.UserDto;
 import com.restful.web.ui.model.request.UserLoginRequestModel;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -51,12 +54,16 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             throws IOException, ServletException{
 
         String userName = ((User) auth.getPrincipal()).getUsername();
+        //String tokenSecret = new SecurityConstants().getTokenSecret();
 
         String token = Jwts.builder()
                 .setSubject(userName)
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET)
                 .compact();
+        UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
+        UserDto userDto = userService.getUser(userName);
         res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
+        res.addHeader("UserID", userDto.getUserId());
     }
 }

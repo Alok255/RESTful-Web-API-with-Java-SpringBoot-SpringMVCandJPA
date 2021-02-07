@@ -1,4 +1,4 @@
-package com.restful.web;
+package com.restful.web.io.repositories;
 
 import com.restful.web.io.entity.UserEntity;
 import org.springframework.data.repository.CrudRepository;
