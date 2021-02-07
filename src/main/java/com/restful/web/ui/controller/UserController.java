@@ -16,9 +16,8 @@ public class UserController {
     @Autowired
     UserService userService;
     @GetMapping
-    public UserRest getUser(){
-
-        return null;
+    public String getUser(){
+        return "Get Users!!!";
     }
 
     @PostMapping
