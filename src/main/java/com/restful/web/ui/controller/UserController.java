@@ -7,7 +7,10 @@ import com.restful.web.ui.model.request.UserDetailsRequestModel;
 import com.restful.web.ui.model.response.UserRest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.awt.*;
 
 @RestController
 @RequestMapping("users") //http://localhost:8080/users
@@ -15,8 +18,10 @@ public class UserController {
 
     @Autowired
     UserService userService;
-    @GetMapping(path="/{id}")
-    public UserRest getUser(@PathVariable String id){
+
+    @GetMapping(path = "/{id}",
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public UserRest getUser(@PathVariable String id) {
 
         UserRest returnValue = new UserRest();
 
@@ -25,8 +30,10 @@ public class UserController {
         return returnValue;
     }
 
-    @PostMapping
-    public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails){
+    @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) {
+
         UserRest returnValue = new UserRest();
 
         UserDto userDto = new UserDto();
@@ -39,12 +46,12 @@ public class UserController {
     }
 
     @PutMapping
-    public String updateUser(){
+    public String updateUser() {
         return "Update User!!!!";
     }
 
     @DeleteMapping
-    public String deleteUser(){
+    public String deleteUser() {
         return "Delete User!!!!";
     }
 }
