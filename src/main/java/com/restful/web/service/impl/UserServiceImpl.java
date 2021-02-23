@@ -1,9 +1,11 @@
 package com.restful.web.service.impl;
 
+import com.restful.web.exceptions.UserServiceExceptions;
 import com.restful.web.io.repositories.UserRepository;
 import com.restful.web.io.entity.UserEntity;
 import com.restful.web.service.UserService;
 import com.restful.web.shared.dto.UserDto;
+import com.restful.web.ui.model.response.ErrorMessages;
 import com.restful.web.util.Utils;
 import jdk.nashorn.internal.runtime.logging.Logger;
 import org.springframework.beans.BeanUtils;
@@ -73,6 +75,23 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findByUserId(userId);
         if(userEntity == null) throw new UsernameNotFoundException(userId);
         BeanUtils.copyProperties(userEntity, returnValue);
+        return returnValue;
+    }
+
+    @Override
+    public UserDto updateUser(String userId, UserDto userDto){
+        UserDto returnValue = new UserDto();
+
+        UserEntity userEntity = userRepository.findByUserId(userId);
+
+        if(userEntity == null) throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+        userEntity.setFirstName(userDto.getFirstName());
+        userEntity.setLastName(userDto.getLastName());
+
+        UserEntity updateUserDetails = userRepository.save(userEntity);
+
+        BeanUtils.copyProperties(updateUserDetails, returnValue);
+
         return returnValue;
     }
 }
