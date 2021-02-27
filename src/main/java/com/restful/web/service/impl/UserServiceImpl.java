@@ -5,6 +5,7 @@ import com.restful.web.io.repositories.UserRepository;
 import com.restful.web.io.entity.UserEntity;
 import com.restful.web.service.UserService;
 import com.restful.web.shared.dto.UserDto;
+import com.restful.web.ui.model.response.ErrorMessage;
 import com.restful.web.ui.model.response.ErrorMessages;
 import com.restful.web.util.Utils;
 import jdk.nashorn.internal.runtime.logging.Logger;
@@ -34,11 +35,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto user) {
 
-       if(userRepository.findByEmail(user.getEmail()) != null) throw new RuntimeException("Record already exists");
+        if (userRepository.findByEmail(user.getEmail()) != null) throw new RuntimeException("Record already exists");
 
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(user, userEntity);
-        String publicUserId  = utils.generateUserId(30);
+        String publicUserId = utils.generateUserId(30);
         userEntity.setUserId(publicUserId);
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
@@ -53,9 +54,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUser(String email){
+    public UserDto getUser(String email) {
         UserEntity userEntity = userRepository.findByEmail(email);
-        if(userEntity == null) throw new UsernameNotFoundException(email);
+        if (userEntity == null) throw new UsernameNotFoundException(email);
         UserDto returnValue = new UserDto();
         BeanUtils.copyProperties(userEntity, returnValue);
         return returnValue;
@@ -65,27 +66,33 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findByEmail(email);
 
-        if(userEntity == null) throw new UsernameNotFoundException(email);
+        if (userEntity == null) throw new UsernameNotFoundException(email);
         return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
     }
 
     @Override
-    public UserDto getUserByUserId(String userId){
+    public UserDto getUserByUserId(String userId) {
         UserDto returnValue = new UserDto();
         UserEntity userEntity = userRepository.findByUserId(userId);
-        if(userEntity == null) throw new UsernameNotFoundException(userId);
+        if (userEntity == null) throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
         BeanUtils.copyProperties(userEntity, returnValue);
         return returnValue;
     }
 
     @Override
-    public UserDto updateUser(String userId, UserDto userDto){
+    public UserDto updateUser(String userId, UserDto userDto) {
         UserDto returnValue = new UserDto();
 
         UserEntity userEntity = userRepository.findByUserId(userId);
 
-        if(userEntity == null) throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+        if (userEntity == null) throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+
+        if (userDto.getFirstName().isEmpty())
+            throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
         userEntity.setFirstName(userDto.getFirstName());
+
+        if (userDto.getLastName().isEmpty())
+            throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
         userEntity.setLastName(userDto.getLastName());
 
         UserEntity updateUserDetails = userRepository.save(userEntity);
@@ -94,4 +101,15 @@ public class UserServiceImpl implements UserService {
 
         return returnValue;
     }
+
+    @Override
+    public void deleteUser(String userId) {
+
+        UserEntity userEntity = userRepository.findByUserId(userId);
+
+        if (userEntity == null) throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+
+        userRepository.delete(userEntity);
+    }
+
 }

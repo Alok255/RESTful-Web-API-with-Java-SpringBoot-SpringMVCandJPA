@@ -1,6 +1,6 @@
 package com.restful.web.exceptions;
 
-public class UserServiceExceptions extends RuntimeException{
+public class UserServiceExceptions extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 

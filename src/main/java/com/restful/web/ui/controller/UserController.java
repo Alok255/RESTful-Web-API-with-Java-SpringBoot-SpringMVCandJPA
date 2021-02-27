@@ -5,8 +5,7 @@ import com.restful.web.exceptions.UserServiceExceptions;
 import com.restful.web.service.UserService;
 import com.restful.web.shared.dto.UserDto;
 import com.restful.web.ui.model.request.UserDetailsRequestModel;
-import com.restful.web.ui.model.response.ErrorMessages;
-import com.restful.web.ui.model.response.UserRest;
+import com.restful.web.ui.model.response.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -65,8 +64,16 @@ public class UserController {
         return returnValue;
     }
 
-    @DeleteMapping
-    public String deleteUser() {
-        return "Delete User!!!!";
+    @DeleteMapping(path = "/{id}",
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public OperationStatusModel deleteUser(@PathVariable String id) {
+
+        OperationStatusModel returnValue = new OperationStatusModel();
+        returnValue.setOperationName(RequestOperationName.DELETE.name());
+
+        userService.deleteUser(id);
+
+        returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+        return returnValue;
     }
 }
