@@ -1,18 +1,14 @@
 package com.restful.web.io.entity;
 
-import javax.annotation.Generated;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.websocket.ClientEndpoint;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 //This @Entity annotation defines that a class can be mapped to a table.
-@Entity(name="users")
+@Entity(name = "users")
 public class UserEntity implements Serializable {
 
-    private static final long serialVersionUID= 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
@@ -37,6 +33,9 @@ public class UserEntity implements Serializable {
 
     @Column(nullable = false)
     private Boolean emailVerificationStatus = false;
+
+    @OneToMany(mappedBy = "userDetails", cascade = CascadeType.ALL)
+    private List<AddressEntity> addresses;
 
     public long getId() {
         return Id;
@@ -102,4 +101,11 @@ public class UserEntity implements Serializable {
         this.emailVerificationStatus = emailVerificationStatus;
     }
 
+    public List<AddressEntity> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<AddressEntity> addresses) {
+        this.addresses = addresses;
+    }
 }

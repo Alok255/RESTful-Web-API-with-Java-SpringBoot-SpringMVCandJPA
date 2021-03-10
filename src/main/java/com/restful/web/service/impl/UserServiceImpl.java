@@ -1,14 +1,15 @@
 package com.restful.web.service.impl;
 
 import com.restful.web.exceptions.UserServiceExceptions;
-import com.restful.web.io.repositories.UserRepository;
 import com.restful.web.io.entity.UserEntity;
+import com.restful.web.io.repositories.UserRepository;
 import com.restful.web.service.UserService;
+import com.restful.web.shared.dto.AddressDTO;
 import com.restful.web.shared.dto.UserDto;
-import com.restful.web.ui.model.response.ErrorMessage;
 import com.restful.web.ui.model.response.ErrorMessages;
 import com.restful.web.util.Utils;
-import jdk.nashorn.internal.runtime.logging.Logger;
+import lombok.extern.java.Log;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-@Logger
+@Log
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -50,8 +51,17 @@ public class UserServiceImpl implements UserService {
 
         if (userRepository.findByEmail(user.getEmail()) != null) throw new RuntimeException("Record already exists");
 
+        for (int i = 0; i < user.getAddresses().size(); i++) {
+            AddressDTO address = user.getAddresses().get(i);
+            address.setUserDetails(user);
+            address.setAddressId(utils.generateAddressId(30));
+            user.getAddresses().set(i, address);
+        }
         UserEntity userEntity = new UserEntity();
-        BeanUtils.copyProperties(user, userEntity);
+        //BeanUtils.copyProperties(user, userEntity);
+        ModelMapper modelMapper = new ModelMapper();
+        userEntity = modelMapper.map(user, UserEntity.class);
+
         String publicUserId = utils.generateUserId(30);
         userEntity.setUserId(publicUserId);
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -61,7 +71,8 @@ public class UserServiceImpl implements UserService {
 
         UserDto returnValue = new UserDto();
 
-        BeanUtils.copyProperties(storedUserDetails, returnValue);
+        //BeanUtils.copyProperties(storedUserDetails, returnValue);
+        returnValue = modelMapper.map(storedUserDetails, UserDto.class);
 
         return returnValue;
     }
@@ -77,7 +88,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserByUserId(String userId) {
         UserDto returnValue = new UserDto();
+
         UserEntity userEntity = userRepository.findByUserId(userId);
+
         if (userEntity == null) throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
         BeanUtils.copyProperties(userEntity, returnValue);
         return returnValue;

@@ -1,5 +1,7 @@
 package com.restful.web.ui.model.request;
 
+import java.util.List;
+
 //This class is use to convert incoming JSON into a Java class
 public class UserDetailsRequestModel {
 
@@ -7,6 +9,7 @@ public class UserDetailsRequestModel {
     private String lastName;
     private String email;
     private String password;
+    private List<AddressRequestModel> addresses;
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -39,4 +42,14 @@ public class UserDetailsRequestModel {
     public String getPassword() {
         return password;
     }
+
+    public List<AddressRequestModel> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<AddressRequestModel> addresses) {
+        this.addresses = addresses;
+    }
+
+
 }
