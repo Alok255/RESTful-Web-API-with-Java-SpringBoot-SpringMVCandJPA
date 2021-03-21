@@ -31,8 +31,10 @@ public class AddressEntity implements Serializable {
 
     @Column(length = 30, nullable = false)
     private String country;
+
     @Column(length = 30, nullable = false)
     private String type;
+
     @ManyToOne
     @JoinColumn(name = "users_id")
     private UserEntity userDetails;

@@ -7,6 +7,7 @@ import com.restful.web.service.UserService;
 import com.restful.web.shared.dto.AddressDTO;
 import com.restful.web.shared.dto.UserDto;
 import com.restful.web.ui.model.response.ErrorMessages;
+import com.restful.web.ui.model.response.UserRest;
 import com.restful.web.util.Utils;
 import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
@@ -88,11 +89,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserByUserId(String userId) {
         UserDto returnValue = new UserDto();
-
         UserEntity userEntity = userRepository.findByUserId(userId);
 
         if (userEntity == null) throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
-        BeanUtils.copyProperties(userEntity, returnValue);
+        ModelMapper modelMapper = new ModelMapper();
+        returnValue = modelMapper.map(userEntity, UserDto.class);
+        //BeanUtils.copyProperties(userEntity, returnValue);
         return returnValue;
     }
 

@@ -30,7 +30,6 @@ public class UserController {
     @GetMapping(path = "/{id}",
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public UserRest getUser(@PathVariable String id) {
-
         UserRest returnValue = new UserRest();
 
         UserDto userDto = userService.getUserByUserId(id);
