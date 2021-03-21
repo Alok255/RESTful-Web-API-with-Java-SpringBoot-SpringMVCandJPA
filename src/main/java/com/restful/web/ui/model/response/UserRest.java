@@ -1,9 +1,11 @@
 package com.restful.web.ui.model.response;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import java.util.List;
 
 //This class is use to convert outgoing Java Object into JSON
-public class UserRest {
+public class UserRest extends RepresentationModel<UserRest> {
 
     private String userId;
     private String firstName;

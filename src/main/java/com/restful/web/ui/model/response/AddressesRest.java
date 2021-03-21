@@ -1,6 +1,8 @@
 package com.restful.web.ui.model.response;
 
-public class AddressesRest {
+import org.springframework.hateoas.*;
+
+public class AddressesRest extends RepresentationModel<AddressesRest>{
 
     private String addressId;
     private String streetName;
